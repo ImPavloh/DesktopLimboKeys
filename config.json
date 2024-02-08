@@ -1,0 +1,42 @@
+{
+    "audio": {
+        "musicEnabled": true,
+        "sfxEnabled": true,
+        "musicVolume": 0.7,
+        "sfxVolume": 0.3
+    },
+    "preferences": {
+        "transparent": false,
+        "borderless": false,
+        "doNotOption": false
+    },
+    "assets": {
+        "font": "pusab.otf",
+        "title": "title.png",
+        "menuBG": "bg.png",
+        "settingsBG": "bg2.png",
+        "infoBG": "bg3.png",
+        "resultBG": "bg4.png",
+        "logo": "blueFace.png",
+        "playLogo": "play.png",
+        "infoLogo": "info.png",
+        "exitLogo": "close.png",
+        "settingsLogo": "options.png",
+        "backLogo": "back.png",
+        "sliderBG": "sliderBG.png",
+        "sliderThumb": "sliderThumb.png",
+        "checkedBox": "checked.png",
+        "uncheckedBox": "unchecked.png",
+        "redKey": "redKey.png",
+        "greenKey": "greenKey.png",
+        "blueFace": "blueFace.png",
+        "greenFace": "greenFace.png",
+        "bgMusic": "bgMusic.mp3",
+        "music": "gameMusic.ogg",
+        "fail": "loseSound.mp3",
+        "success": "winSound.mp3",
+        "clickSound": "clickSound.ogg",
+        "backSound": "backSound.ogg",
+        "playSound": "playSound.ogg"
+    }
+}
