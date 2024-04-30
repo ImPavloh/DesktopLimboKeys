@@ -1,0 +1,60 @@
+How to install DesktopLimboKeys
+
+Welcome to the installation guide for the DesktopLimboKeys game!
+This guide will help you get started quickly and easily, even if you're not familiar with using the command line.
+
+If you still need help you can contact with me via Twitter (@impavloh) and Discord (@pavloh)
+
+
+--------------------------------------------------
+First of all we need Pyhton to run the commands!
+    Install it from here: https://www.python.org/downloads/
+--------------------------------------------------
+
+Step 1: Download the game
+
+Option A: Using Git (hard mode if you aren't familiar with Git)
+
+    Open your command prompt:
+    Windows: Search for 'cmd' in the Start menu and open it.
+    Linux: Open the Terminal.
+    Type the following command and press Enter:
+    git clone https://github.com/impavloh/DesktopLimboKeys
+    This will download the game files to your computer.
+
+Option B: Download ZIP file (easy mode)
+
+    Visit the GitHub page: https://github.com/impavloh/DesktopLimboKeys
+    Click the green 'Code' button and select 'Download ZIP'
+    Once downloaded, unzip the file to a location of your choice (e.g. Desktop)
+
+--------------------------------------------------
+
+Step 2: Open the project directory
+
+    Navigate to the folder where you extracted the game or cloned with Git.
+    If you're unsure how to do this:
+        Open that folder in Explorer (Windows) or Finder (Linux) (or use cd <foldername>).
+        Click on the address bar, type 'cmd' and press Enter. This will open the command prompt or terminal in that folder.
+
+--------------------------------------------------
+
+Step 3: Install the game requirements
+
+    In the command prompt or terminal, type the following command and press Enter:
+        pip install -r requirements.txt
+    This command installs all necessary dependencies for the game.
+
+--------------------------------------------------
+
+Step 4: Start the game
+
+    To launch the game, type the following in your command prompt or terminal and press Enter:
+
+    Windows:
+        python menu.py
+
+    Linux:
+        python3 menu.py
+
+    The menu should now start, and you can begin playing! FOCUS

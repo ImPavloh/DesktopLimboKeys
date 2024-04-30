@@ -22,12 +22,15 @@
 
 ## 🚀 Usage
 
+> [!WARNING]  
+> **[Download Python](https://www.python.org/downloads/)** if you don't have it yet. It's necessary.
+   
 1. **Clone the repository** 🔗
-   - Use Git to clone the repository to your local machine:
+   - If you have [Git](https://git-scm.com/downloads), use it to clone the repository to your local machine:
      ```bash
      git clone https://github.com/impavloh/DesktopLimboKeys
      ```
-   - Alternatively, [download](https://github.com/impavloh/DesktopLimboKeys/archive/refs/heads/master.zip) the project directly using the 'Download ZIP' option from the green button.
+   - Or [download](https://github.com/impavloh/DesktopLimboKeys/archive/refs/heads/master.zip) the project directly using the 'Download ZIP' option from "CODE" (the green button)
 
 2. **Navigate to the project directory** 📂
    ```bash
@@ -35,8 +38,7 @@
    ```
 
 3. **Install requirements** 📦
-
-    - Use pip to install the necessary dependencies:
+    - Use [pip](https://python.land/virtual-environments/installing-packages-with-pip) to install the necessary dependencies:
    ```bash
    pip install -r requirements.txt
    ```
@@ -46,10 +48,14 @@
     ```bash
     python menu.py
     ```
-    - If you are using Linux, you need to use python3 instead:
+    - If you are using Linux, you have to use python3 instead:
     ```bash
     python3 menu.py
     ```
+
+> [!NOTE]  
+> Use the file ``howToInstall.txt` to review the installation steps again.
+> If you still need support, contact with me via [Twitter](https://twitter.com/impavloh) or [Discord](https://discord.com/users/471780464542351393).
 
 ## 📃 Credits
 - 🎮 [RobTop](https://x.com/RobTopGames) for providing the game assets, including sprites and sound of [Geometry Dash](https://store.steampowered.com/app/322170/Geometry_Dash/)
