@@ -54,16 +54,16 @@
     ```
 
 > [!NOTE]  
-> Use the file ``howToInstall.txt` to review the installation steps again.
+> Use the file `howToInstall.txt` to review the installation steps again.
 > If you still need support, contact with me via [Twitter](https://twitter.com/impavloh) or [Discord](https://discord.com/users/471780464542351393).
 
 ## 📃 Credits
-- 🎮 [RobTop](https://x.com/RobTopGames) for providing the game assets, including sprites and sound of [Geometry Dash](https://store.steampowered.com/app/322170/Geometry_Dash/)
-- 👾 [Mindcap](https://x.com/MindCap): creator of the Geometry Dash level "[Limbo](https://gdbrowser.com/86084399)"
-- 🔑 [Crohn44](https://www.youtube.com/channel/UC_uAx-Nk1tvsVubM9LaJWxQ): final part of Limbo (keys concept)
-- 🎵 [NightHawk22](https://nighthawk22.newgrounds.com) for composing the original music "[Isolation](https://www.newgrounds.com/audio/listen/76743)"
-- 💻 [Quasar098](https://github.com/quasar098) for the [original code](https://github.com/quasar098/limbos32) related to the animation of the keys and the server-client communication. Initially, I planned to just submit a PR, but was motivated to develop a project from the ground up using his work as inspiration :)
-- 📝 Flat-it for the main font used in Geometry Dash
+- 🎮 [RobTop](https://x.com/RobTopGames), the owner of the game assets, including sprites and sound of for [Geometry Dash](https://store.steampowered.com/app/322170/Geometry_Dash/)
+- 👾 [Mindcap](https://x.com/MindCap), creator of the Geometry Dash level "[Limbo](https://gdbrowser.com/86084399)"
+- 🔑 [Crohn44](https://www.youtube.com/channel/UC_uAx-Nk1tvsVubM9LaJWxQ), final part of Limbo (keys concept)
+- 🎵 [NightHawk22](https://nighthawk22.newgrounds.com), for composing the original music "[Isolation](https://www.newgrounds.com/audio/listen/76743)"
+- 💻 [Quasar098](https://github.com/quasar098), for the [original code](https://github.com/quasar098/limbos32) related to the animation of the keys and the server-client communication. Initially, I planned to just submit a PR, but was motivated to develop a project from the ground up using his work as inspiration :)
+- 📝 Flat-it - The main font used in Geometry Dash
 
 ## 💡 Contributing
 **Contributions are welcome!** For major changes, please open an [issue](https://github.com/impavloh/DesktopLimboKeys/issues) first to discuss what you would like to change.
