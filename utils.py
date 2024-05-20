@@ -7,6 +7,7 @@ import threading
 import platform
 import pygame
 import json
+import sys
 import os
 
 if platform.system() in ['Windows', 'Darwin']: import pygetwindow as gw
@@ -126,8 +127,8 @@ class AssetManager: # refactor this?
                     assets[asset_name] = pygame.font.Font(str(path), 42)
                 else:
                     print(f"Unsupported file type for {asset_name}: {path.suffix}")
-            except Exception as e:
-                print(f"Error loading {asset_name}: {e}")
+            except:
+                sys.exit(0)
         return assets
 
     def get_asset_type(self, file_extension):

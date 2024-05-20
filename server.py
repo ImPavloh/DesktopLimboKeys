@@ -1,6 +1,6 @@
 from utils import ClientServer, GAME_START_TIME, STEP_SPEED, DO_TIMES, ui_manager, assets
 from json import loads, dumps
-from time import time
+from time import time, sleep
 import socketserver
 import numpy as np
 import threading
@@ -28,67 +28,70 @@ class GameServer:
         with self.lock:
             self.steps = ClientServer.generate_steps()
 
-    def update_game_status(self, client_id, data): # move UI to utils?
+    def update_game_status(self, client_id, data):
         with self.lock:
             if data.get("quit"):
                 self.alive = False
             if data.get("clicked"):
-                pygame.init()
-                screen_result = pygame.display.set_mode((300, 200))
-                pygame.display.set_caption("Limbo!")
-                pygame.display.set_icon(assets.assets['logo'])
-                self.success = self.correct_key == client_id
+                self.handle_click_event(client_id)
 
-                win_lose_bg = pygame.transform.scale(assets.assets['resultBG'], (300, 200))
+    def handle_click_event(self, client_id):
+        pygame.init()
+        screen_result = pygame.display.set_mode((300, 200))
+        pygame.display.set_caption("Limbo!")
+        pygame.display.set_icon(assets.assets['logo'])
+        self.success = self.correct_key == client_id
 
-                if self.success:
-                    title = "Congratulations!"
-                    text = "You did it :)"
-                    title_color = (0,171,102)
-                    text_color = (46,139,87)
-                else:
-                    title = "Not even close"
-                    text = "Give it another try"
-                    title_color = (220,20,60)
-                    text_color = (240, 128, 128)
+        win_lose_bg = pygame.transform.scale(assets.assets['resultBG'], (300, 200))
 
-                title_surface = ui_manager.render_text(title, color=title_color, use_shadow=True, font_size=32)
-                text_surface = ui_manager.render_text(text, color=text_color, use_shadow=True, font_size=26)
+        if self.success:
+            title, text = "Congratulations!", "You did it :)"
+            title_color, text_color = (0, 171, 102), (46, 139, 87)
+        else:
+            title, text = "Not even close", "Give it another try"
+            title_color, text_color = (220, 20, 60), (240, 128, 128)
 
-                CLOSE_EVENT = pygame.USEREVENT + 1
-                pygame.time.set_timer(CLOSE_EVENT, 5000)
+        title_surface = ui_manager.render_text(title, color=title_color, use_shadow=True, font_size=32)
+        text_surface = ui_manager.render_text(text, color=text_color, use_shadow=True, font_size=26)
 
-                running_result = True
-                while running_result:
-                    for event in pygame.event.get():
-                        if event.type == pygame.QUIT:
-                            running_result = False
-                        elif event.type == CLOSE_EVENT:
-                            running_result = False
+        CLOSE_EVENT = pygame.USEREVENT + 1
+        pygame.time.set_timer(CLOSE_EVENT, 5000)
 
-                    if running_result:
-                        screen_result.blit(win_lose_bg, (0, 0))
-                        screen_result.blit(title_surface, (150 - title_surface.get_width() / 2, 50))
-                        screen_result.blit(text_surface, (150 - text_surface.get_width() / 2, 150))
-                        pygame.display.flip()
+        self.display_result_screen(screen_result, win_lose_bg, title_surface, text_surface, CLOSE_EVENT)
+        self.alive = False
+        pygame.quit()
+        sys.exit()
 
-                self.alive = False
-                pygame.quit()
-                sys.exit()
+    def display_result_screen(self, screen, bg, title_surface, text_surface, close_event):
+        running_result = True
+        while running_result:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT or event.type == close_event:
+                    running_result = False
+            if running_result:
+                screen.blit(bg, (0, 0))
+                screen.blit(title_surface, (150 - title_surface.get_width() / 2, 50))
+                screen.blit(text_surface, (150 - text_surface.get_width() / 2, 150))
+                pygame.display.flip()
 
     def get_reply(self, client_id):
         current_time = time() - self.start_time
         if not self.alive:
             return {"close": True}
-        else:
-            return {
-                "id": client_id,
-                "position": ClientServer.get_pos(client_id, current_time, self.steps),
-                "alive": self.alive,
-                "highlight": 1 if client_id == self.correct_key and 2 < current_time < 3 else -1,
-                "success": self.success,
-                "clickable": current_time > GAME_START_TIME + STEP_SPEED * DO_TIMES + 0.5,
-            }
+        return {
+            "id": client_id,
+            "position": ClientServer.get_pos(client_id, current_time, self.steps),
+            "alive": self.alive,
+            "highlight": 1 if client_id == self.correct_key and 2 < current_time < 3 else -1,
+            "success": self.success,
+            "clickable": current_time > GAME_START_TIME + STEP_SPEED * DO_TIMES + 0.5,
+        }
+
+    def remove_client(self, client_id):
+        with self.lock:
+            self.clients.pop(client_id, None)
+            if not self.clients:
+                self.alive = False
 
 class ServerHandler(socketserver.BaseRequestHandler):
     def setup(self):
@@ -100,6 +103,9 @@ class ServerHandler(socketserver.BaseRequestHandler):
         if len(game_server.clients) == 1:
             game_server.generate_steps()
             game_server.start_time = time()
+        self.heartbeat_thread = threading.Thread(target=self.send_heartbeat)
+        self.heartbeat_thread.daemon = True
+        self.heartbeat_thread.start()
 
     def handle(self):
         try:
@@ -107,18 +113,28 @@ class ServerHandler(socketserver.BaseRequestHandler):
                 data = loads(self.request.recv(1024).decode('utf-8'))
                 game_server.update_game_status(self.client_id, data)
                 self.send_reply()
-        except OSError:
+        except (OSError, ConnectionResetError):
             pass
+        except Exception as e:
+            print(f"Unexpected error: {e}")
 
     def send_reply(self):
-        reply = game_server.get_reply(self.client_id)
-        self.request.sendall(dumps(reply).encode('utf-8') + b'\n')
+        try:
+            reply = game_server.get_reply(self.client_id)
+            self.request.sendall(dumps(reply).encode('utf-8') + b'\n')
+        except Exception as e:
+            print(f"Error sending reply to client {self.client_id}: {e}")
+
+    def send_heartbeat(self):
+        while game_server.alive:
+            sleep(5)
+            try:
+                self.request.sendall(dumps({"heartbeat": True}).encode('utf-8') + b'\n')
+            except OSError:
+                break
 
     def finish(self):
-        with game_server.lock:
-            game_server.clients.pop(self.client_id, None)
-            if not game_server.clients:
-                game_server.alive = False
+        game_server.remove_client(self.client_id)
 
 def signal_handler(sig, frame):
     try:

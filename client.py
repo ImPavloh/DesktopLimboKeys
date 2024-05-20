@@ -28,7 +28,8 @@ class Client:
         self.music = music_setting
         self.server_address = server_address
         self.id_surface = pygame.Surface((0, 0))
-        threading.Thread(target=self.listening_thread).start()
+        self.listener_thread = threading.Thread(target=self.listening_thread)
+        self.listener_thread.start()
         
     def listening_thread(self):
         buffer = ""
@@ -38,24 +39,37 @@ class Client:
             s.sendall(dumps({"quit": False, "clicked": False}).encode('ascii') + b'\n')
             while not self.game_over:
                 sleep(0.02)
-                response = s.recv(1024).decode('ascii')
+                try:
+                    response = s.recv(1024).decode('ascii')
+                except ConnectionResetError:
+                    self.game_over = True
+                    self.alive = False
+                    break
+
                 if not response:
                     break
 
                 buffer += response
                 while '\n' in buffer:
                     raw_message, buffer = buffer.split('\n', 1)
-                    msg = loads(raw_message)
+                    try:
+                        msg = loads(raw_message)
+                    except ValueError:
+                        print("Received malformed JSON message")
+                        continue
                     
                     if msg.get("close"):
                         self.game_over = True
                         self.alive = False
                         break
 
-                    self.id, self.position, self.alive, self.success, self.clickable, self.highlight_amount = (
-                        msg["id"], msg["position"], msg["alive"], msg["success"],
-                        msg["clickable"], min(1, max(self.highlight_amount + msg.get("highlight", 0) * 4 / 60, 0))
-                    )
+                    self.id = msg.get("id", self.id)
+                    self.position = msg.get("position", self.position)
+                    self.alive = msg.get("alive", self.alive)
+                    self.success = msg.get("success", self.success)
+                    self.clickable = msg.get("clickable", self.clickable)
+                    self.highlight_amount = min(1, max(self.highlight_amount + msg.get("highlight", 0) * 4 / 60, 0))
+                    
                     if not assigned_client_id and self.id == 0 and self.music:
                         assets.assets['music'].set_volume(config.config['audio']['musicVolume'])
                         assets.assets['music'].play()
@@ -65,6 +79,7 @@ class Client:
                 if self.wants_to_quit or not self.alive or self.clicked:
                     self.game_over = True
 
+    @staticmethod
     def game_loop():
         global client
         
@@ -116,12 +131,16 @@ class Client:
         sys.exit()
 
 if __name__ == "__main__":
-    pygame.init()
-    pygame.display.set_caption("Limbo!")
-    pygame.display.set_icon(assets.assets['logo'])
-    
-    clock = pygame.time.Clock()
-    flags = pygame.NOFRAME if preferences["borderless"] else 0
-    screen = pygame.display.set_mode((150, 150), flags=flags | pygame.SRCALPHA)
+    try:
+        pygame.init()
+        pygame.display.set_caption("Limbo!")
+        pygame.display.set_icon(assets.assets['logo'])
 
-    Client.game_loop()
+        clock = pygame.time.Clock()
+        flags = pygame.NOFRAME if preferences["borderless"] else 0
+        screen = pygame.display.set_mode((150, 150), flags=flags | pygame.SRCALPHA)
+
+        Client.game_loop()
+    except KeyboardInterrupt:
+        pygame.quit()
+        sys.exit()

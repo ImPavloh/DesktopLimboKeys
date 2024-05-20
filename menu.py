@@ -282,4 +282,8 @@ if __name__ == "__main__":
     menu_surface = pygame.Surface((750, 600))
     menu_surface.fill((0, 0, 0))
     
-    main_menu(screen, assets.assets)
+    try:
+        main_menu(screen, assets.assets)
+    except:
+        pygame.quit()
+        sys.exit()
